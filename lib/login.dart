@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:uts/QrCodeLogin.dart';
 void main() {
   runApp(MaterialApp(
 
@@ -53,7 +53,7 @@ class _LoginState extends State<Login> {
   }
 
   login() async{
-    final response = await http.post("http://192.168.43.18/login/api/login.php", 
+    final response = await http.post(Uri.parse('https://debly.cc/api-uas/api/login.php'),
     body: {
       "email": email,
       "password": password
@@ -74,7 +74,6 @@ class _LoginState extends State<Login> {
       print(pesan);
     }
   }
-
   saved(int value, String email, String nama)async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
@@ -98,7 +97,7 @@ class _LoginState extends State<Login> {
   logout() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
-      preferences.setInt("value", null);
+      preferences.setInt("value", 0);
       preferences.commit();
       _loginStatus = LoginStatus.notSignIn;
     });
@@ -199,6 +198,15 @@ class _LoginState extends State<Login> {
                   child: Text("Register Here"),
                 ),
                 RaisedButton(
+                  child: Text('Login QR Code'),
+                  color: Colors.orangeAccent,
+                  onPressed: (){
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ScanScreen()
+                    ));
+                  },
+                ),
+                RaisedButton(
                   child: Text('Login'),
                   color: Colors.blueAccent,
                   onPressed: (){
@@ -247,7 +255,7 @@ class _RegisterState extends State<Register> {
 
   }
   save() async{
-    final response = await http.post("http://192.168.43.18/login/api/register.php", 
+    final response = await http.post(Uri.parse("https://debly.cc/api-uas/api/register.php"),
     body:{
       "nama": nama,
       "email": email,
